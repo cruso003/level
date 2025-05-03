@@ -1,4 +1,5 @@
 // app/faq/page.tsx
+"use client";
 import { FAQSection } from '@/components/faq-section';
 import { CallToAction } from '@/components/call-to-action';
 

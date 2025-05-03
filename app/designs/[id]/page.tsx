@@ -1,4 +1,3 @@
-// app/designs/[id]/page.tsx
 import { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,12 +8,15 @@ import { getDesignById } from '@/lib/designer-data';
 import { getProductsWithDesignByDesignId } from '@/lib/products-with-designs';
 import { notFound } from 'next/navigation';
 
-export async function generateMetadata({ 
-  params 
-}: { 
-  params: { id: string } 
-}): Promise<Metadata> {
-  const design = getDesignById(params.id);
+// Define the type for params as a Promise
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+// Metadata generation
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const resolvedParams = await params; // Resolve the params Promise
+  const design = getDesignById(resolvedParams.id);
   
   if (!design) {
     return {
@@ -28,8 +30,10 @@ export async function generateMetadata({
   };
 }
 
-export default function DesignPage({ params }: { params: { id: string } }) {
-  const design = getDesignById(params.id);
+// Page component
+export default async function DesignPage({ params }: PageProps) {
+  const resolvedParams = await params; // Resolve the params Promise
+  const design = getDesignById(resolvedParams.id);
   
   if (!design) {
     notFound();

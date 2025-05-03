@@ -1,4 +1,3 @@
-// app/collections/[id]/page.tsx
 import { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -7,12 +6,15 @@ import { Card, CardContent } from '@/components/ui/card';
 import { getCollectionById, getDesignsByCollectionId } from '@/lib/designer-data';
 import { notFound } from 'next/navigation';
 
-export async function generateMetadata({ 
-  params 
-}: { 
-  params: { id: string } 
-}): Promise<Metadata> {
-  const collection = getCollectionById(params.id);
+// Define the type for params as a Promise
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+// Metadata generation
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const resolvedParams = await params; // Resolve the params Promise
+  const collection = getCollectionById(resolvedParams.id);
   
   if (!collection) {
     return {
@@ -26,8 +28,10 @@ export async function generateMetadata({
   };
 }
 
-export default function CollectionPage({ params }: { params: { id: string } }) {
-  const collection = getCollectionById(params.id);
+// Page component
+export default async function CollectionPage({ params }: PageProps) {
+  const resolvedParams = await params; // Resolve the params Promise
+  const collection = getCollectionById(resolvedParams.id);
   
   if (!collection) {
     notFound();
